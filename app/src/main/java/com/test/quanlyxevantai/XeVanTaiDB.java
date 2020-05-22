@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 public class XeVanTaiDB {
-    SQLiteDatabase database;
+    static SQLiteDatabase database;
     DBHelper dbHelper;
 
     public XeVanTaiDB(Context context) {
@@ -25,7 +25,7 @@ public class XeVanTaiDB {
 
     }
 
-    public Cursor layTatCaDuLieu() {
+    public static Cursor layTatCaDuLieu() {
         // Biến cot là khai báo danh sách các cột cần lấy.
         String[] cot = {DBHelper.COT_ID,
                 DBHelper.COT_SOPHIEU,
@@ -41,7 +41,7 @@ public class XeVanTaiDB {
         return cursor;
     }
 
-    public long them(PhieuPhanCong phieuPhanCong) {
+    public static long them(PhieuPhanCong phieuPhanCong) {
         ContentValues values = new ContentValues();
         values.put(DBHelper.COT_SOPHIEU,
                 phieuPhanCong.getSoPhieu());
@@ -59,15 +59,14 @@ public class XeVanTaiDB {
                 TEN_BANG_XeVanTai, null, values);
     }
 
-    public long xoa(PhieuPhanCong phieuPhanCong) {
+    public static long xoa(PhieuPhanCong phieuPhanCong) {
         return database.delete(DBHelper
                 .TEN_BANG_XeVanTai, DBHelper
                 .COT_SOPHIEU + " = " + "'" +
                 phieuPhanCong.getSoPhieu() + "'", null);
     }
 
-
-    public long sua(PhieuPhanCong phieuPhanCong) {
+    public static long sua(PhieuPhanCong phieuPhanCong) {
         ContentValues values = new ContentValues();
         values.put(DBHelper.COT_SOPHIEU,
                 phieuPhanCong.getSoPhieu());
@@ -83,7 +82,7 @@ public class XeVanTaiDB {
                 phieuPhanCong.getXe());
         return database.update(DBHelper
                         .TEN_BANG_XeVanTai, values,
-                DBHelper.COT_ID + " = "
-                        + phieuPhanCong.getId(), null);
+                DBHelper.COT_SOPHIEU + " = "
+                        + phieuPhanCong.getSoPhieu(), null);
     }
 }

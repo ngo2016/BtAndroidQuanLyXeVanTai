@@ -30,9 +30,8 @@ public class DBHelper extends SQLiteOpenHelper {
             + COT_XE + " text not null );";
 
 
-
-    public DBHelper( Context context) {
-        super(context,TEN_DATABASE,null,1);
+    public DBHelper(Context context) {
+        super(context, TEN_DATABASE, null, 1);
     }
 
 

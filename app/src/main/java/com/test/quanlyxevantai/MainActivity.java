@@ -2,6 +2,7 @@ package com.test.quanlyxevantai;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList tinh = new ArrayList();
     ArrayList xe = new ArrayList();
     ArrayList<PhieuPhanCong> phieuPhanCongs = new ArrayList<>();
+    XeVanTaiDB xeVanTaiDB;
     int index = -1;
 
     @Override
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SetEvent() {
+        xeVanTaiDB = new XeVanTaiDB(this);
+
         tuyen.add("Hồ Chí Minh - Bình Dương");
         tuyen.add("Hồ Chí Minh - Long An");
         ArrayAdapter adapter = new ArrayAdapter(this,
@@ -58,31 +62,54 @@ public class MainActivity extends AppCompatActivity {
         btnThem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(etSoPhieu.getText().toString().equals("")) {
+                if (etSoPhieu.getText().toString().equals("")) {
                     etSoPhieu.setError("Bạn phải nhập Số ");
                     etSoPhieu.requestFocus();
                     return;
                 }
-                if(etNgay.getText().toString().equals("")) {
+                if (etNgay.getText().toString().equals("")) {
                     etNgay.setError("Bạn phải nhập Ngày");
                     etNgay.requestFocus();
                     return;
                 }
-                if(etXuatPhat.getText().toString().equals("")) {
+                if (etXuatPhat.getText().toString().equals("")) {
                     etXuatPhat.setError("Bạn phải nhập Xuất phát");
                     etXuatPhat.requestFocus();
                     return;
                 }
 
+                PhieuPhanCong phanCong = layDL();
+                XeVanTaiDB.them(phanCong);
+
+                Cursor cursor = XeVanTaiDB.layTatCaDuLieu();
+                if (cursor != null) {
+                    phieuPhanCongs.clear();
+                    while (cursor.moveToNext()) {
+                        PhieuPhanCong phieuPhanCong = new PhieuPhanCong();
+                        phieuPhanCong.setId("" + cursor.getInt(0));
+                        phieuPhanCong.setSoPhieu(cursor.getString(1));
+                        phieuPhanCong.setNgay(cursor.getString(2));
+                        phieuPhanCong.setXuatPhat(cursor.getString(3));
+                        phieuPhanCong.setTuyen(cursor.getString(4));
+                        phieuPhanCong.setTinh(cursor.getString(5));
+                        phieuPhanCong.setXe(cursor.getString(6));
+                        phieuPhanCongs.add(phieuPhanCong);
+                    }
+                    adapter3.notifyDataSetChanged();
+                }
+            }
+
+            private PhieuPhanCong layDL() {
                 PhieuPhanCong phieuPhanCong = new PhieuPhanCong();
-                phieuPhanCong.setSoPhieu(etSoPhieu.getText().toString().trim());
-                phieuPhanCong.setNgay(etNgay.getText().toString().trim());
-                phieuPhanCong.setXuatPhat(etXuatPhat.getText().toString().trim());
+
+                phieuPhanCong.setSoPhieu(etSoPhieu.getText().toString());
+                phieuPhanCong.setNgay(etNgay.getText().toString());
+                phieuPhanCong.setXuatPhat(etXuatPhat.getText().toString());
                 phieuPhanCong.setTuyen(spTuyen.getSelectedItem().toString());
                 phieuPhanCong.setTinh(spTinh.getSelectedItem().toString());
                 phieuPhanCong.setXe(spXe.getSelectedItem().toString());
-                phieuPhanCongs.add(phieuPhanCong);
-                adapter3.notifyDataSetChanged();
+
+                return phieuPhanCong;
             }
         });
 
@@ -99,40 +126,60 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        lvXe.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                phieuPhanCongs.remove(position);
-                adapter3.notifyDataSetChanged();
-                return false;
-            }
-        });
-
         btnXoa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(index != -1 && phieuPhanCongs.isEmpty()) {
-                    return;
+                PhieuPhanCong phieuPhanCong = new PhieuPhanCong();
+                phieuPhanCong.setSoPhieu(etSoPhieu.getText().toString());
+                XeVanTaiDB.xoa(phieuPhanCong);
+
+                Cursor cursor = XeVanTaiDB.layTatCaDuLieu();
+                if (cursor != null) {
+                    phieuPhanCongs.clear();
+                    while (cursor.moveToNext()) {
+                        PhieuPhanCong phanCong = new PhieuPhanCong();
+                        phanCong.setId("" + cursor.getInt(0));
+                        phanCong.setSoPhieu(cursor.getString(1));
+                        phanCong.setNgay(cursor.getString(2));
+                        phanCong.setXuatPhat(cursor.getString(3));
+                        phanCong.setTuyen(cursor.getString(4));
+                        phanCong.setTinh(cursor.getString(5));
+                        phanCong.setXe(cursor.getString(6));
+                        phieuPhanCongs.add(phanCong);
+                    }
+                    adapter3.notifyDataSetChanged();
                 }
-                phieuPhanCongs.remove(index);
-                adapter3.notifyDataSetChanged();
             }
         });
 
         btnSua.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(index != -1 && phieuPhanCongs.isEmpty()) {
-                    return;
-                }
-                PhieuPhanCong phieuPhanCong = phieuPhanCongs.get(index);
+                PhieuPhanCong phieuPhanCong = new PhieuPhanCong();
                 phieuPhanCong.setSoPhieu(etSoPhieu.getText().toString().trim());
                 phieuPhanCong.setNgay(etNgay.getText().toString().trim());
                 phieuPhanCong.setXuatPhat(etXuatPhat.getText().toString().trim());
                 phieuPhanCong.setTuyen(spTuyen.getSelectedItem().toString());
                 phieuPhanCong.setTinh(spTinh.getSelectedItem().toString());
                 phieuPhanCong.setXe(spXe.getSelectedItem().toString());
-                adapter3.notifyDataSetChanged();
+                XeVanTaiDB.sua(phieuPhanCong);
+
+                Cursor cursor = XeVanTaiDB.layTatCaDuLieu();
+                if (cursor != null) {
+                    phieuPhanCongs.clear();
+                    while (cursor.moveToNext()) {
+                        PhieuPhanCong phanCong = new PhieuPhanCong();
+                        phanCong.setId("" + cursor.getInt(0));
+                        phanCong.setSoPhieu(cursor.getString(1));
+                        phanCong.setNgay(cursor.getString(2));
+                        phanCong.setXuatPhat(cursor.getString(3));
+                        phanCong.setTuyen(cursor.getString(4));
+                        phanCong.setTinh(cursor.getString(5));
+                        phanCong.setXe(cursor.getString(6));
+                        phieuPhanCongs.add(phanCong);
+                    }
+                    adapter3.notifyDataSetChanged();
+                }
             }
         });
 
@@ -145,16 +192,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SetControl() {
-        etSoPhieu=findViewById(R.id.etSoPhieu);
-        etNgay=findViewById(R.id.etNgay);
-        etXuatPhat=findViewById(R.id.etXuatPhat);
-        spTuyen=findViewById(R.id.spTuyen);
-        spTinh=findViewById(R.id.spTinh);
-        spXe=findViewById(R.id.spXe);
-        btnThem=findViewById(R.id.btnThem);
-        btnXoa=findViewById(R.id.btnXoa);
-        btnSua=findViewById(R.id.btnSua);
-        btnThoat=findViewById(R.id.btnThoat);
-        lvXe=findViewById(R.id.lvXe);
+        etSoPhieu = findViewById(R.id.etSoPhieu);
+        etNgay = findViewById(R.id.etNgay);
+        etXuatPhat = findViewById(R.id.etXuatPhat);
+        spTuyen = findViewById(R.id.spTuyen);
+        spTinh = findViewById(R.id.spTinh);
+        spXe = findViewById(R.id.spXe);
+        btnThem = findViewById(R.id.btnThem);
+        btnXoa = findViewById(R.id.btnXoa);
+        btnSua = findViewById(R.id.btnSua);
+        btnThoat = findViewById(R.id.btnThoat);
+        lvXe = findViewById(R.id.lvXe);
     }
 }
