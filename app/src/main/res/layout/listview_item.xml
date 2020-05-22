@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="85dp"
+        android:src="@drawable/icons8_container_truck_48" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvXe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ferrari"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvNgay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="09/05/2020" />
+
+        <TextView
+            android:id="@+id/tvTuyen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hồ Chí Minh - Bình Dương" />
+
+        <TextView
+            android:id="@+id/tvTinh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hồ Chí Minh" />
+    </LinearLayout>
+</LinearLayout>
